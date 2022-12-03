@@ -16,7 +16,9 @@ from homeassistant.components.light import (
     SUPPORT_BRIGHTNESS,
     SUPPORT_COLOR,
     SUPPORT_EFFECT,
+    ColorMode,
     LightEntity,
+    LightEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -126,6 +128,10 @@ async def async_setup_entry(
 
 class HyperHDRBaseLight(LightEntity):
     """A HyperHDR light base class."""
+    
+    _attr_color_mode = ColorMode.HS
+    _attr_supported_color_modes = {ColorMode.HS}
+    _attr_supported_features = LightEntityFeature.EFFECT
 
     def __init__(
         self,
@@ -220,7 +226,7 @@ class HyperHDRBaseLight(LightEntity):
     def effect_list(self) -> list[str]:
         """Return the list of supported effects."""
         return self._effect_list
-
+    
     @property
     def supported_features(self) -> int:
         """Flag supported features."""
@@ -244,6 +250,7 @@ class HyperHDRBaseLight(LightEntity):
             manufacturer=HYPERHDR_MANUFACTURER_NAME,
             model=HYPERHDR_MODEL_NAME,
             name=self._instance_name,
+            configuration_url=self._client.remote_url,
         )
 
     def _get_option(self, key: str) -> Any:
